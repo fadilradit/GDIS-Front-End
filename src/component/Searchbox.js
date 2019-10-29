@@ -16,7 +16,6 @@ class Searchbox extends Component{
         axios.get('https://api.nytimes.com/svc/archive/v1/2019/9.json?api-key=pyau1mCKMFHOBuLLfnUaI2wrkAL3SLT2')
             .then(res => {
                 this.setState({news: res.data.response.docs})
-                console.log(this.state.news);
             })
             .catch(err => console.log(err))
     }
@@ -28,10 +27,7 @@ class Searchbox extends Component{
         const filter = this.state.news.filter((item) => {
             return item.snippet.toLowerCase().includes(search.toLowerCase())
         })
-        // console.log(this.state.news[0].abstract.toLowerCase().includes(search.toLowerCase()))
-         console.log(filter)
         this.setState({filterNews: filter})
-        console.log(this.state.filterNews);
         
     }
 
@@ -41,7 +37,8 @@ class Searchbox extends Component{
             return(
                 <div className = "col-auto border border-dark m-5 bg-dark shadow-lg rounded">
                         <h2 className = "font-weight-bold text-white">{item.snippet}</h2>
-                            <button className = "btn btn-primary m-2">Detail</button>
+                            <h5 className = "text-white">{item.abstract}</h5>
+                            <h5 className = "text-white">{item.lead_paragraph}</h5>
                     </div>
             )
         })
