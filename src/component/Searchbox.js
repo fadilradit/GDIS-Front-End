@@ -4,18 +4,47 @@ import axios from 'axios'
 class Searchbox extends Component{
 
     state = {
-        news : []
+        news : [],
+        filterNews: []
+    }
+    componentDidMount() {
+        this.getNews()
     }
 
-    onSearch = () => {
-        const search = this.search.value
-
-        axios.get('https://api.nytimes.com/svc/search/v2/articlesearch.json?q=messi&api-key=pyau1mCKMFHOBuLLfnUaI2wrkAL3SLT2')
+    // get news
+    getNews = () => {
+        axios.get('https://api.nytimes.com/svc/archive/v1/2019/9.json?api-key=pyau1mCKMFHOBuLLfnUaI2wrkAL3SLT2')
             .then(res => {
-                this.setState({search: res.docs})
-                console.log(this.state.search);
-                
+                this.setState({news: res.data.response.docs})
+                console.log(this.state.news);
             })
+            .catch(err => console.log(err))
+    }
+
+    // search
+    onSearch = (e) => {
+        e.preventDefault()
+        const search = this.search.value
+        const filter = this.state.news.filter((item) => {
+            return item.snippet.toLowerCase().includes(search.toLowerCase())
+        })
+        // console.log(this.state.news[0].abstract.toLowerCase().includes(search.toLowerCase()))
+         console.log(filter)
+        this.setState({filterNews: filter})
+        console.log(this.state.filterNews);
+        
+    }
+
+    renderList = () => {
+        return this.state.filterNews.map(item => {
+
+            return(
+                <div className = "col-auto border border-dark m-5 bg-dark shadow-lg rounded">
+                        <h2 className = "font-weight-bold text-white">{item.snippet}</h2>
+                            <button className = "btn btn-primary m-2">Detail</button>
+                    </div>
+            )
+        })
     }
 
     render(){
@@ -38,7 +67,7 @@ class Searchbox extends Component{
                                         <span class="input-group-text bg-dark text-white" >Search</span>
                                         </div>
                                         <input  placeholder='Input here' className='w-50' ref = {(input) => {this.search = input}} />
-                                        <button className='btn btn-success' onClick = {() => {this.onSearch()}} >Submit</button>
+                                        <button className='btn btn-success' onClick = {this.onSearch} >Submit</button>
                                     </div>
                                 </form>
                             </div>
@@ -51,10 +80,7 @@ class Searchbox extends Component{
                         <h1 className = "row m-5">List:</h1>
                     </div>
 
-                    <div className = "col-auto border border-dark m-5 bg-dark shadow-lg rounded">
-                        <h2 className = "font-weight-bold text-white">Title</h2>
-                            <button className = "btn btn-primary m-2">Detail</button>
-                    </div>
+                    {this.renderList()}
 
                 </div>
             </div>
